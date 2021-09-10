@@ -29,6 +29,8 @@ def acha_zero(matrix):
             if matrix[i][j] == 0:
                 return (i, j) #linha, coluna
 
+    return None
+
 def numero_eh_valido(matrix, num, pos):
     #linha
     for i in range(len(matrix[0])):
@@ -52,4 +54,31 @@ def numero_eh_valido(matrix, num, pos):
     return True
 
 
+def resolve_sudoku(matrix):
+
+    achou = acha_zero(matrix)
+    if not achou:
+        return True #Jogo completo
+    else:
+        linha, coluna = achou
+
+    for i in range(1, 10): #testa os números de 1 a 9
+        if numero_eh_valido(matrix, i, (linha, coluna)):
+            matrix[linha][coluna] = i #muda zero para número testado
+
+            if resolve_sudoku(matrix): #Chama a função novamente para continuar preenchendo os zeros
+                return True
+
+            #se a função retornou falso significa que o número testado antes foi invalido
+            #então volta para a chamada anterior e tenta outro valor
+
+            matrix[linha][coluna] = 0
+
+    return False
+
+
+mostra_sudoku(jogo)
+print("_____________________")
+print("                     ")
+resolve_sudoku(jogo)
 mostra_sudoku(jogo)
