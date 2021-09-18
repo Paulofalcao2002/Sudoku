@@ -1,84 +1,32 @@
-jogo = [
-    [7,8,0,4,0,0,1,2,0],
-    [6,0,0,0,7,5,0,0,9],
-    [0,0,0,6,0,1,0,7,8],
-    [0,0,7,0,4,0,2,6,0],
-    [0,0,1,0,5,0,9,3,0],
-    [9,0,4,0,6,0,0,0,5],
-    [0,7,0,3,0,0,0,1,2],
-    [1,2,0,0,0,7,4,0,0],
-    [0,4,9,2,0,6,0,0,7]
-]
-def mostra_sudoku(matrix):
-    for i in range(len(matrix)):
-        if i % 3 == 0 and i != 0:
-            print('- - - - - - - - - - - - - ')
+# ===== Inicialização =====
+# ----- Importa e inicia pacotes
+import pygame
+from classes import Jogo
 
-        for j in range(len(matrix[0])): #iterando pela coluna
-            if j % 3 == 0 and j != 0:
-                print(" | ", end="")
+pygame.init()
 
-            if j == 8:
-                print(matrix[i][j])
-            else:
-                print(f'{matrix[i][j]} ', end="")
+# ----- Gera tela principal
+window = pygame.display.set_mode((550, 600))
+pygame.display.set_caption('Sudoku')
 
-def acha_zero(matrix):
-    for i in range(len(matrix)):
-        for j in range(len(matrix[i])):
-            if matrix[i][j] == 0:
-                return (i, j) #linha, coluna
+# ----- Inicia estruturas de dados
+game = True
 
-    return None
+# ===== Loop principal =====
+while game:
+    # ----- Trata eventos
+    for event in pygame.event.get():
+        # ----- Verifica consequências
+        if event.type == pygame.QUIT:
+            game = False
 
-def numero_eh_valido(matrix, num, pos):
-    #linha
-    for i in range(len(matrix[0])):
-        if matrix[pos[0]][i] == num and pos[1] != i:
-            return False
+    # ----- Gera saídas
+    window.fill((255, 255, 255))  # Preenche com a cor branca
 
-    #coluna
-    for i in range(len(matrix)):
-        if matrix[i][pos[1]] == num and pos[0] != i:
-            return False
+    jogo = Jogo()
 
-    #bloco 9x9
-    bloco_x = pos[1] // 3
-    bloco_y = pos[0] // 3
+    # ----- Atualiza estado do jogo
+    pygame.display.update()  # Mostra o novo frame para o jogador
 
-    for i in range(bloco_y*3, bloco_y*3 + 3):
-        for j in range(bloco_x*3, bloco_x*3 + 3):
-            if matrix[i] == num and (i,j) != pos:
-                return False
-
-    return True
-
-
-def resolve_sudoku(matrix):
-
-    achou = acha_zero(matrix)
-    if not achou:
-        return True #Jogo completo
-    else:
-        linha, coluna = achou
-
-    for i in range(1, 10): #testa os números de 1 a 9
-        if numero_eh_valido(matrix, i, (linha, coluna)):
-            matrix[linha][coluna] = i #muda zero para número testado
-
-            if resolve_sudoku(matrix): #Chama a função novamente para continuar preenchendo os zeros
-                return True
-
-            #se a função retornou falso significa que o número testado antes foi invalido
-            #então volta para a chamada anterior e tenta outro valor
-
-            matrix[linha][coluna] = 0
-
-    return False
-
-
-mostra_sudoku(jogo)
-print("_____________________")
-print("                     ")
-resolve_sudoku(jogo)
-mostra_sudoku(jogo)
+# ===== Finalização =====
+pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
